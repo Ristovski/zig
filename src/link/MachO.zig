@@ -321,9 +321,8 @@ pub fn openPath(allocator: Allocator, options: link.Options) !*MachO {
         // TODO this intermediary_basename isn't enough; in the case of `zig build-exe`,
         // we also want to put the intermediary object file in the cache while the
         // main emit directory is the cwd.
-        self.base.intermediary_basename = try std.fmt.allocPrint(allocator, "{s}{s}", .{
-            emit.sub_path, options.object_format.fileExt(options.target.cpu.arch),
-        });
+        // LLVM automatically appends the `.o` extension so just copy the sub path.
+        self.base.intermediary_basename = try allocator.dupe(u8, emit.sub_path);
     }
 
     if (options.output_mode == .Lib and
